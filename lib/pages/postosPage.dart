@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../controllers/postos_controller.dart';
 
@@ -8,7 +9,7 @@ class PostosPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meu Local'),
+        title: Center(child: Text('Meu Local')),
       ),
       body: ChangeNotifierProvider<PostosController>(
         create: (context) => PostosController(),
@@ -16,12 +17,18 @@ class PostosPage extends StatelessWidget {
           builder: (context) {
             final local = context.watch<PostosController>();
 
-            String mensagem = local.erro == ''
-                ? 'Latitude: ${local.lat} | Longitude: ${local.long}'
-                : local.erro;
+            //print('latitude e longitude');
+            //print(local.lat);
+            //print(local.long);
 
-            return Center(
-              child: Text(mensagem),
+            return GoogleMap(
+              initialCameraPosition: CameraPosition(
+                  target: LatLng(local.lat, local.long), zoom: 5),
+              zoomControlsEnabled: true,
+              mapType: MapType.normal,
+              myLocationEnabled: true,
+              onMapCreated: local.onMapCreated,
+              markers: local.markers,
             );
           },
         ),
