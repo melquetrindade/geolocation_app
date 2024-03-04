@@ -1,7 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:postos_locais/repository/postos_repository.dart';
+import '../pages/postosPage.dart';
+import '../widgets/posto_detalhes.dart';
 
 class PostosController extends ChangeNotifier {
   double lat = 0.0;
@@ -25,11 +28,17 @@ class PostosController extends ChangeNotifier {
 
   loadPostos() {
     final postos = PostosRepository().postos;
-    postos.forEach((posto) {
+    postos.forEach((posto) async {
       markers.add(Marker(
           markerId: MarkerId(posto.nome),
           position: LatLng(posto.latitude, posto.longitude),
-          onTap: () => {}));
+          icon: await BitmapDescriptor.fromAssetImage(
+              ImageConfiguration(), 'images/posto.png'),
+          onTap: () => {
+                showModalBottomSheet(
+                    context: appKey.currentState!.context,
+                    builder: (context) => PostoDetalhes(posto: posto))
+              }));
     });
     notifyListeners();
   }
